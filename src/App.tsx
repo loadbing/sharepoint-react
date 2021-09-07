@@ -11,11 +11,33 @@ function App() {
       const items: any[] = await sp.web.lists.getByTitle('BaseDatosPersonas').select('Title, ID').items.getAll();
 
       setItems(items);
-    } catch {
-
+    } catch (error) {
+      console.log(error);
     }
 
   }, [])
+
+  const insertItem = async () => {
+    try {
+      await sp.web.lists.getByTitle("BaseDatosPersonas").items.add({
+        Title: 'Valor ' + Math.random().toFixed(1)
+      });
+
+      getListItems();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const deleteItem = async (id: any) => {
+    try {
+      await sp.web.lists.getByTitle("BaseDatosPersonas").items.getById(id).delete();
+
+      getListItems();
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     getListItems();
@@ -25,7 +47,8 @@ function App() {
     <div className="App">
       <header className="App-header">
         <ul>
-          {items.map(x => <li>{x.Title}</li>)}
+          {items.map(x => <li>{x.Title} <a onClick={() => deleteItem(x.ID)}
+            className="App-link">Eliminar</a></li>)}
         </ul>
 
         <img src={logo} className="App-logo" alt="logo" />
@@ -34,11 +57,10 @@ function App() {
         </p>
         <a
           className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
           rel="noopener noreferrer"
+          onClick={() => insertItem()}
         >
-          Learn React
+          Insertar
         </a>
       </header>
     </div>
